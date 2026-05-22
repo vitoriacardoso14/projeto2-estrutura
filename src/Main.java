@@ -31,6 +31,8 @@ public class Main {
 
             switch (option) {
 
+//=====
+
                 case 1:
 
                     // EXIBE AS OPÇÕES DE GÊNERO PARA O USUÁRIO
@@ -103,6 +105,181 @@ public class Main {
                     }
 
                     break;
+
+//=====
+
+                case 2:
+
+                    // =====================================================
+                    // ESCOLHA DO GÊNERO
+                    // =====================================================
+
+                    System.out.println("\n=== GÊNEROS ===");
+
+                    System.out.println("(1) - Crime");
+                    System.out.println("(2) - Drama");
+                    System.out.println("(3) - Comédia");
+                    System.out.println("(4) - Ação");
+                    System.out.println("(5) - Romance");
+
+                    System.out.print("\nEscolha um gênero: ");
+
+                    int genreOption2 = sc.nextInt();
+
+                    sc.nextLine();
+
+                    // VARIÁVEL QUE GUARDARÁ O GÊNERO
+                    // NO FORMATO DO DATASET
+                    String genre2 = "";
+
+                    // CONVERTE A OPÇÃO ESCOLHIDA
+                    // PARA O GÊNERO EM INGLÊS
+                    switch (genreOption2) {
+
+                        case 1:
+                            genre2 = "crime";
+                            break;
+
+                        case 2:
+                            genre2 = "drama";
+                            break;
+
+                        case 3:
+                            genre2 = "comedy";
+                            break;
+
+                        case 4:
+                            genre2 = "action";
+                            break;
+
+                        case 5:
+                            genre2 = "romance";
+                            break;
+
+                        default:
+
+                            System.out.println("\nGênero inválido.");
+                            break;
+                    }
+
+                    // =====================================================
+                    // ESCOLHA DO TIPO
+                    // =====================================================
+
+                    System.out.println("\n=== TIPO ===");
+
+                    System.out.println("(1) - Filme");
+                    System.out.println("(2) - Série");
+
+                    System.out.print("\nEscolha o tipo: ");
+
+                    int typeOption = sc.nextInt();
+
+                    sc.nextLine();
+
+                    // VARIÁVEL QUE GUARDARÁ O TIPO
+                    String type = "";
+
+                    switch (typeOption) {
+
+                        case 1:
+                            type = "MOVIE";
+                            break;
+
+                        case 2:
+                            type = "SHOW";
+                            break;
+
+                        default:
+
+                            System.out.println("\nTipo inválido.");
+                            break;
+                    }
+
+                    // =====================================================
+                    // ESCOLHA DA CLASSIFICAÇÃO INDICATIVA
+                    // =====================================================
+
+                    System.out.println("\n=== CLASSIFICAÇÃO INDICATIVA ===");
+
+                    System.out.println("(1) - TV-MA  | Conteúdo adulto");
+                    System.out.println("(2) - TV-14 | Maiores de 14 anos");
+                    System.out.println("(3) - PG-13 | Maiores de 13 anos");
+                    System.out.println("(4) - R     | Restrito para menores");
+                    System.out.println("(5) - PG    | Orientação dos pais");
+
+                    System.out.print("\nEscolha a classificação: ");
+
+                    int ageOption = sc.nextInt();
+
+                    sc.nextLine();
+
+                    // VARIÁVEL QUE GUARDARÁ A CLASSIFICAÇÃO
+                    String ageCert = "";
+
+                    switch (ageOption) {
+
+                        case 1:
+                            ageCert = "TV-MA";
+                            break;
+
+                        case 2:
+                            ageCert = "TV-14";
+                            break;
+
+                        case 3:
+                            ageCert = "PG-13";
+                            break;
+
+                        case 4:
+                            ageCert = "R";
+                            break;
+
+                        case 5:
+                            ageCert = "PG";
+                            break;
+
+                        default:
+
+                            System.out.println("\nClassificação inválida.");
+                            break;
+                    }
+
+                    // =====================================================
+                    // POPULARIDADE MÍNIMA
+                    // =====================================================
+
+                    System.out.print(
+                            "\nDigite a popularidade mínima no TMDB: "
+                    );
+
+                    double minPopularity = sc.nextDouble();
+
+                    // =====================================================
+                    // EXECUTA A ANÁLISE
+                    // =====================================================
+
+                    if (
+                            !genre2.equals("")
+                            &&
+                            !type.equals("")
+                            &&
+                            !ageCert.equals("")
+                    ) {
+
+                        Analysis.top10Recommended(
+
+                                tree,
+                                genre2,
+                                type,
+                                ageCert,
+                                minPopularity
+                        );
+                    }
+
+                    break;
+                
+//=====
 
                 case 0:
 
