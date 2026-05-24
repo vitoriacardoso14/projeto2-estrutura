@@ -762,10 +762,9 @@ public class Analysis {
                     p.getShowType()
                             .equalsIgnoreCase("MOVIE");
 
-            // PALAVRA-CHAVE NO TÍTULO
+            // PALAVRA-CHAVE NA DESCRIÇÃO (Acha muito mais resultados!)
             boolean validKeyword =
-
-                    p.getTitle()
+                    p.getDescription()
                             .toLowerCase()
                             .contains(
                                     keyword.toLowerCase()

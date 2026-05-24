@@ -134,6 +134,58 @@ public class ProgramaNetFlix {
         this.imdbScore = imdbScore;
     }
 
+    public void setId(String id) {
+    this.id = id;
+    }
+
+    public void setShowType(String showType) {
+        this.showType = showType;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public void setAgeCertification(String ageCertification) {
+        this.ageCertification = ageCertification;
+    }
+
+    public void setRuntime(int runtime) {
+        this.runtime = runtime;
+    }
+
+    public void setGenres(String genres) {
+        this.genres = genres;
+    }
+
+    public void setProductionCountries(String productionCountries) {
+        this.productionCountries = productionCountries;
+    }
+
+    public void setSeasons(int seasons) {
+        this.seasons = seasons;
+    }
+
+    public void setImdbId(String imdbId) {
+        this.imdbId = imdbId;
+    }
+
+    public void setImdbVotes(int imdbVotes) {
+        this.imdbVotes = imdbVotes;
+    }
+
+    public void setTmdbPopularity(double tmdbPopularity) {
+        this.tmdbPopularity = tmdbPopularity;
+    }
+
+    public void setTmdbScore(double tmdbScore) {
+        this.tmdbScore = tmdbScore;
+    }
+
     // EXIBIÇÃO
 
     @Override

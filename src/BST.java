@@ -51,7 +51,7 @@ public class BST {
     }
 
     // =====================================================
-    // INSERIR ELEMENTO NA BST
+    // OPÇÃO 3 DO EDITAL - INSERIR PROGRAMA
     // =====================================================
     public void insert(ProgramaNetFlix program) {
 
@@ -59,7 +59,7 @@ public class BST {
     }
 
     // =====================================================
-    // INSERÇÃO RECURSIVA
+    // INSERÇÃO RECURSIVA (SUPORTE OPÇÃO 1 E 3)
     // =====================================================
     private Node insertRecursive(
             Node current,
@@ -106,20 +106,73 @@ public class BST {
     }
 
     // =====================================================
-    // BUSCAR PROGRAMA PELO ID
+    // OPÇÃO 4 DO EDITAL - BUSCAR PROGRAMA COM MÉTRICAS
     // =====================================================
-    public ProgramaNetFlix search(String id) {
+    public void searchWithMetrics(String id) {
+
+        // INICIA O MONITOR DE TEMPO (Exigência do edital)
+        long startTime = System.nanoTime();
 
         // ZERA AS COMPARAÇÕES
         comparisons = 0;
 
-        return searchRecursive(root, id);
+        Node result = searchRecursiveMetrics(root, id);
+
+        // PARA O MONITOR DE TEMPO
+        long endTime = System.nanoTime();
+
+        System.out.println("\n=== RESULTADO DA BUSCA ===");
+
+        // =================================================
+        // EXIBE OS DADOS SE ENCONTRADO
+        // =================================================
+        if (result != null) {
+
+            System.out.println(
+                    "Programa encontrado: "
+                    + result.data.getTitle()
+            );
+
+            System.out.println(
+                    "Tipo: "
+                    + result.data.getShowType()
+                    + " | Ano: "
+                    + result.data.getReleaseYear()
+            );
+
+            System.out.println(
+                    "Nota IMDB: "
+                    + result.data.getImdbScore()
+            );
+
+        } else {
+
+            System.out.println(
+                    "Programa com ID '"
+                    + id
+                    + "' não foi encontrado."
+            );
+        }
+
+        // =================================================
+        // EXIBE AS MÉTRICAS EXIGIDAS
+        // =================================================
+        System.out.println(
+                "Comparações realizadas: "
+                + comparisons
+        );
+
+        System.out.println(
+                "Tempo de execução: "
+                + (endTime - startTime)
+                + " ns"
+        );
     }
 
     // =====================================================
-    // BUSCA RECURSIVA
+    // BUSCA RECURSIVA COM MÉTRICAS
     // =====================================================
-    private ProgramaNetFlix searchRecursive(
+    private Node searchRecursiveMetrics(
             Node current,
             String id
     ) {
@@ -146,7 +199,7 @@ public class BST {
         // =================================================
         if (compare == 0) {
 
-            return current.data;
+            return current;
         }
 
         // =================================================
@@ -154,7 +207,7 @@ public class BST {
         // =================================================
         if (compare < 0) {
 
-            return searchRecursive(
+            return searchRecursiveMetrics(
                     current.left,
                     id
             );
@@ -163,14 +216,14 @@ public class BST {
         // =================================================
         // PROCURA À DIREITA
         // =================================================
-        return searchRecursive(
+        return searchRecursiveMetrics(
                 current.right,
                 id
         );
     }
 
     // =====================================================
-    // REMOVER ELEMENTO
+    // OPÇÃO 5 DO EDITAL - REMOVER PROGRAMA
     // =====================================================
     public void remove(String id) {
 
@@ -189,6 +242,12 @@ public class BST {
         // NÃO ENCONTROU
         // =================================================
         if (current == null) {
+            
+            System.out.println(
+                    "Erro: ID '"
+                    + id
+                    + "' não encontrado para remoção."
+            );
 
             return null;
         }
@@ -222,6 +281,12 @@ public class BST {
         // ENCONTROU O NÓ
         // =================================================
         else {
+
+            System.out.println(
+                    "Programa '"
+                    + current.data.getTitle()
+                    + "' removido com sucesso!"
+            );
 
             // =============================================
             // CASO 1 - SEM FILHOS
@@ -272,7 +337,7 @@ public class BST {
     }
 
     // =====================================================
-    // PROCURA O MENOR NÓ
+    // PROCURA O MENOR NÓ (SUPORTE PARA REMOÇÃO)
     // =====================================================
     private Node findSmallest(Node current) {
 
@@ -285,7 +350,7 @@ public class BST {
     }
 
     // =====================================================
-    // ALTURA DA ÁRVORE
+    // OPÇÃO 6 DO EDITAL - EXIBIR A ALTURA DA ÁRVORE
     // =====================================================
     public int height() {
 
@@ -298,11 +363,11 @@ public class BST {
     private int heightRecursive(Node current) {
 
         // =================================================
-        // ÁRVORE VAZIA
+        // ÁRVORE VAZIA OU NÓ FOLHA
         // =================================================
         if (current == null) {
 
-            return -1;
+            return -1; // -1 para que folhas tenham altura 0
         }
 
         int leftHeight =
@@ -318,7 +383,8 @@ public class BST {
     }
 
     // =====================================================
-    // PERCURSO EM ORDEM SIMÉTRICA
+    // SUPORTE PARA A OPÇÃO 2 DO EDITAL - ANÁLISES DE DADOS
+    // (Percurso em Ordem Simétrica)
     // =====================================================
     public void inOrder() {
 
@@ -342,7 +408,8 @@ public class BST {
     }
 
     // =====================================================
-    // PERCURSO PRÉ-ORDEM
+    // SUPORTE PARA A OPÇÃO 2 DO EDITAL - ANÁLISES DE DADOS
+    // (Percurso em Pré-Ordem)
     // =====================================================
     public void preOrder() {
 
@@ -366,7 +433,8 @@ public class BST {
     }
 
     // =====================================================
-    // PERCURSO PÓS-ORDEM
+    // SUPORTE PARA A OPÇÃO 2 DO EDITAL - ANÁLISES DE DADOS
+    // (Percurso em Pós-Ordem)
     // =====================================================
     public void postOrder() {
 
@@ -390,7 +458,8 @@ public class BST {
     }
 
     // =====================================================
-    // PERCURSO EM LARGURA
+    // SUPORTE PARA A OPÇÃO 2 DO EDITAL - ANÁLISES DE DADOS
+    // (Percurso em Largura)
     // =====================================================
     public void breadthFirst() {
 

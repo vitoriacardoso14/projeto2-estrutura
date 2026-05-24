@@ -8,275 +8,138 @@ Integrantes:
 */
 
 import com.opencsv.CSVReader;
-
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.PrintWriter;
+
+import com.opencsv.CSVWriter;
 
 public class Loader {
 
-    // =====================================================
-    // LEITURA DO DATASET
-    // =====================================================
     public static void loadData(String filePath, BST tree) {
 
         try {
-
-            // =================================================
-            // ABRE O ARQUIVO CSV
-            // =================================================
-            CSVReader reader =
-                    new CSVReader(
-                            new FileReader(filePath)
-                    );
-
+            CSVReader reader = new CSVReader(new FileReader(filePath));
             String[] line;
+            reader.readNext(); // Pula o cabeçalho
 
-            // =================================================
-            // PULA O CABEÇALHO
-            // =================================================
-            reader.readNext();
+            int filmesSalvos = 0; // Contador só para você ver que funcionou
 
-            // =================================================
-            // LÊ LINHA POR LINHA
-            // =================================================
             while ((line = reader.readNext()) != null) {
 
-                // =============================================
-                // VERIFICA SE EXISTEM 15 ATRIBUTOS
-                // =============================================
                 if (line.length < 15) {
-
                     continue;
                 }
 
                 // =============================================
-                // VERIFICA CAMPOS VAZIOS
+                // O GRANDE TRUQUE PARA SALVAR OS FILMES
+                // Se for MOVIE, a coluna 9 (seasons) vem vazia. 
+                // Colocamos "0" para não ser descartado!
                 // =============================================
+                if (line[2].equalsIgnoreCase("MOVIE") && (line[9] == null || line[9].trim().isEmpty())) {
+                    line[9] = "0"; 
+                }
+
                 boolean valid = true;
 
                 for (String field : line) {
-
-                    if (
-                            field == null
-                            ||
-                            field.trim().isEmpty()
-                    ) {
-
+                    if (field == null || field.trim().isEmpty()) {
                         valid = false;
-
                         break;
                     }
                 }
 
-                // =============================================
-                // DESCARTA LINHAS INVÁLIDAS
-                // =============================================
                 if (!valid) {
-
                     continue;
                 }
 
-                // =============================================
-                // CRIA OBJETO ProgramaNetFlix
-                // =============================================
-                ProgramaNetFlix program =
-                        new ProgramaNetFlix(
+                ProgramaNetFlix program = new ProgramaNetFlix(
+                        line[0], line[1], line[2], line[3],
+                        Integer.parseInt(line[4]), line[5],
+                        (int) Double.parseDouble(line[6]), line[7],
+                        line[8], (int) Double.parseDouble(line[9]),
+                        line[10], Double.parseDouble(line[11]),
+                        (int) Double.parseDouble(line[12]),
+                        Double.parseDouble(line[13]),
+                        Double.parseDouble(line[14])
+                );
 
-                                // id
-                                line[0],
-
-                                // title
-                                line[1],
-
-                                // showType
-                                line[2],
-
-                                // description
-                                line[3],
-
-                                // releaseYear
-                                Integer.parseInt(line[4]),
-
-                                // ageCertification
-                                line[5],
-
-                                // runtime
-                                (int) Double.parseDouble(line[6]),
-
-                                // genres
-                                line[7],
-
-                                // productionCountries
-                                line[8],
-
-                                // seasons
-                                (int) Double.parseDouble(line[9]),
-
-                                // imdbId
-                                line[10],
-
-                                // imdbScore
-                                Double.parseDouble(line[11]),
-
-                                // imdbVotes
-                                (int) Double.parseDouble(line[12]),
-
-                                // tmdbPopularity
-                                Double.parseDouble(line[13]),
-
-                                // tmdbScore
-                                Double.parseDouble(line[14])
-                        );
-
-                // =============================================
-                // INSERE NA BST
-                // =============================================
                 tree.insert(program);
+                if (line[2].equalsIgnoreCase("MOVIE")) filmesSalvos++;
             }
 
-            // =================================================
-            // FECHA O ARQUIVO
-            // =================================================
             reader.close();
-
-            System.out.println(
-                    "\nDataset carregado com sucesso!"
-            );
+            System.out.println("\nDataset carregado com sucesso!");
+            System.out.println("Filmes recuperados com o ajuste de temporada nula: " + filmesSalvos);
 
         } catch (Exception e) {
-
-            System.out.println(
-                    "\nErro ao carregar dataset:"
-            );
-
+            System.out.println("\nErro ao carregar dataset:");
             e.printStackTrace();
         }
     }
 
-    // =====================================================
-    // SALVAR DADOS DA BST EM CSV
-    // =====================================================
-    public static void saveData(
-            String filePath,
-            BST tree
-    ) {
-
+        public static void saveData(String filePath, BST tree) {
         try {
+                CSVWriter writer = new CSVWriter(new FileWriter(filePath));
 
-            // =================================================
-            // CRIA O ARQUIVO
-            // =================================================
-            PrintWriter writer =
-                    new PrintWriter(
-                            new FileWriter(filePath)
-                    );
+                String[] header = {
+                        "id",
+                        "title",
+                        "show_type",
+                        "description",
+                        "release_year",
+                        "age_certification",
+                        "runtime",
+                        "genres",
+                        "production_countries",
+                        "seasons",
+                        "imdb_id",
+                        "imdb_score",
+                        "imdb_votes",
+                        "tmdb_popularity",
+                        "tmdb_score"
+                };
 
-            // =================================================
-            // ESCREVE O CABEÇALHO
-            // =================================================
-            writer.println(
-                    "id,title,show_type,description,"
-                    + "release_year,age_certification,"
-                    + "runtime,genres,production_countries,"
-                    + "seasons,imdb_id,imdb_score,"
-                    + "imdb_votes,tmdb_popularity,tmdb_score"
-            );
+                writer.writeNext(header);
 
-            // =================================================
-            // SALVA TODOS OS DADOS DA BST
-            // =================================================
-            saveRecursive(
-                    tree.getRoot(),
-                    writer
-            );
+                saveRecursive(tree.getRoot(), writer);
 
-            // =================================================
-            // FECHA O ARQUIVO
-            // =================================================
-            writer.close();
+                writer.close();
 
-            System.out.println(
-                    "\nDados salvos com sucesso!"
-            );
+                System.out.println("\nDados salvos com sucesso!");
 
         } catch (Exception e) {
-
-            System.out.println(
-                    "\nErro ao salvar arquivo:"
-            );
-
-            e.printStackTrace();
+                System.out.println("\nErro ao salvar arquivo:");
+                e.printStackTrace();
         }
-    }
+        }
 
-    // =====================================================
-    // PERCORRE A BST E SALVA OS DADOS
-    // =====================================================
-    private static void saveRecursive(
-            Node current,
-            PrintWriter writer
-    ) {
-
+        private static void saveRecursive(Node current, CSVWriter writer) {
         if (current != null) {
+                saveRecursive(current.left, writer);
 
-            // =============================================
-            // PERCORRE ESQUERDA
-            // =============================================
-            saveRecursive(
-                    current.left,
-                    writer
-            );
+                ProgramaNetFlix p = current.data;
 
-            // =============================================
-            // DADOS DO PROGRAMA
-            // =============================================
-            ProgramaNetFlix p =
-                    current.data;
+                String[] line = {
+                        p.getId(),
+                        p.getTitle(),
+                        p.getShowType(),
+                        p.getDescription(),
+                        String.valueOf(p.getReleaseYear()),
+                        p.getAgeCertification(),
+                        String.valueOf(p.getRuntime()),
+                        p.getGenres(),
+                        p.getProductionCountries(),
+                        String.valueOf(p.getSeasons()),
+                        p.getImdbId(),
+                        String.valueOf(p.getImdbScore()),
+                        String.valueOf(p.getImdbVotes()),
+                        String.valueOf(p.getTmdbPopularity()),
+                        String.valueOf(p.getTmdbScore())
+                };
 
-            // =============================================
-            // ESCREVE A LINHA NO CSV
-            // =============================================
-            writer.println(
+                writer.writeNext(line);
 
-                    p.getId() + ","
-
-                    + "\"" + p.getTitle() + "\"" + ","
-
-                    + p.getShowType() + ","
-
-                    + "\"" + p.getDescription() + "\"" + ","
-
-                    + p.getReleaseYear() + ","
-
-                    + p.getAgeCertification() + ","
-
-                    + p.getRuntime() + ","
-
-                    + "\"" + p.getGenres() + "\"" + ","
-
-                    + "\"" + p.getProductionCountries() + "\"" + ","
-
-                    + p.getSeasons() + ","
-
-                    + p.getImdbId() + ","
-
-                    + p.getImdbScore() + ","
-
-                    + p.getImdbVotes() + ","
-
-                    + p.getTmdbPopularity() + ","
-
-                    + p.getTmdbScore()
-            );
-
-            // =============================================
-            // PERCORRE DIREITA
-            // =============================================
-            saveRecursive(
-                    current.right,
-                    writer
-            );
+                saveRecursive(current.right, writer);
+                }
         }
-    }
 }
