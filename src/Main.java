@@ -323,8 +323,10 @@ public class Main {
                     System.out.print("Escolha um país: ");
                     int countryOpt = sc.nextInt();
                     
-                    String country = "US";
-                    if (countryOpt == 2) {
+                    String country = "";
+                    if (countryOpt == 1) {
+                        country = "US";
+                    } else if (countryOpt == 2) {
                         country = "BR";
                     } else if (countryOpt == 3) {
                         country = "GB";
@@ -332,6 +334,11 @@ public class Main {
                         country = "JP";
                     } else if (countryOpt == 5) {
                         country = "KR";
+                    }
+                    // validação
+                    if (country.equals("")) {
+                        System.out.println("País inválido.");
+                        break;
                     }
 
                     System.out.println();
