@@ -5,7 +5,11 @@ import java.util.Queue;
 
 public class Analysis {
 
+    // ====================================================================
     // ANÁLISE 1 - Top 10 títulos por gênero e avaliação
+    // PERCURSO: EM ORDEM SIMÉTRICA
+    // ====================================================================
+
     public static void top10ByGenre(
             BST tree,
             String genre,
@@ -14,51 +18,82 @@ public class Analysis {
 
         ArrayList<ProgramaNetFlix> result = new ArrayList<>();
 
-        collectTitles(tree.getRoot(), result, genre, minVotes);
+        collectInOrder(
+                tree.getRoot(),
+                result,
+                genre,
+                minVotes
+        );
 
-        // ordena por imdb_score decrescente
+        // ORDENA POR:
+        // 1º maior imdb_score
+        // 2º maior imdb_votes
         result.sort(
-  
-        Comparator
 
-                // ORDENA PELO IMDB SCORE
-                .comparingDouble(
-                        ProgramaNetFlix::getImdbScore
-                )
+                Comparator
 
-                // MAIOR SCORE PRIMEIRO
-                .reversed()
+                        .comparingDouble(
+                                ProgramaNetFlix::getImdbScore
+                        )
 
-                // DESEMPATE:
-                // MAIOR QUANTIDADE DE VOTOS
-                .thenComparing(
-                        Comparator.comparingInt(
-                                ProgramaNetFlix::getImdbVotes
-                        ).reversed()
-                )
-);
+                        .reversed()
 
-        System.out.println("\n=== TOP 10 TÍTULOS ===\n");
+                        .thenComparing(
+
+                                Comparator
+                                        .comparingInt(
+                                                ProgramaNetFlix::getImdbVotes
+                                        )
+
+                                        .reversed()
+                        )
+        );
+
+        System.out.println(
+                "\n=== TOP 10 TÍTULOS POR GÊNERO ===\n"
+        );
 
         int limit = Math.min(10, result.size());
+
+        if (limit == 0) {
+
+            System.out.println(
+                    "Nenhum título encontrado."
+            );
+
+            return;
+        }
 
         for (int i = 0; i < limit; i++) {
 
             ProgramaNetFlix p = result.get(i);
 
             System.out.println(
+
                     (i + 1) + ". "
+
                     + p.getTitle()
-                    + " | IMDB: "
+
+                    + "\nGênero: "
+                    + p.getGenres()
+
+                    + "\nIMDB Score: "
                     + p.getImdbScore()
-                    + " | Votes: "
+
+                    + "\nIMDB Votes: "
                     + p.getImdbVotes()
+
+                    + "\n"
             );
         }
     }
 
-    // PERCORRE A BST
-    private static void collectTitles(
+    // ====================================================================
+    // PERCURSO EM ORDEM SIMÉTRICA
+    // ESQUERDA -> RAIZ -> DIREITA
+    // ====================================================================
+
+    private static void collectInOrder(
             Node current,
             ArrayList<ProgramaNetFlix> result,
             String genre,
@@ -67,175 +102,17 @@ public class Analysis {
 
         if (current != null) {
 
-            collectTitles(current.left, result, genre, minVotes);
-
-            ProgramaNetFlix p = current.data;
-
-            if (
-                    p.getGenres().toLowerCase().contains(genre.toLowerCase())
-                    &&
-                    p.getImdbVotes() > minVotes
-            ) {
-
-                result.add(p);
-            }
-
-            collectTitles(current.right, result, genre, minVotes);
-        }
-    }
-
-    // ====================================================================
-    // ANÁLISE 2 - Títulos mais recomendados para assistir (Pós-ordem)
-    // ====================================================================
-    public static void top10Recommended(
-        BST tree,
-        String genre,
-        String type,
-        String ageCert,
-        double minTmdbPop)
-    {// LISTA QUE ARMAZENARÁ OS TÍTULOS FILTRADOS
-        ArrayList<ProgramaNetFlix> result = new ArrayList<>();
-
-        // CHAMA O MÉTODO QUE PERCORRE A BST EM PÓS-ORDEM
-        collectRecommended(
-            tree.getRoot(),
-            result,
-            genre,
-            type,
-            ageCert,
-            minTmdbPop
-        );
-
-    // =========================================================
-    // ORDENAÇÃO DOS RESULTADOS
-    // =========================================================
-    // 1º critério:
-    // Maior imdb_score
-
-    // 2º critério (desempate):
-    // Maior quantidade de votos
-
-        result.sort(
-
-            Comparator
-                    .comparingDouble(
-                            ProgramaNetFlix::getImdbScore
-                    )
-
-                    // ORDEM DECRESCENTE
-                    .reversed()
-
-                    // DESEMPATE POR QUANTIDADE DE VOTOS
-                    .thenComparing(
-
-                            Comparator
-                                    .comparingInt(
-                                            ProgramaNetFlix::getImdbVotes
-                                    )
-
-                                    .reversed()
-                    )
-        );
-
-        // TÍTULO DA ANÁLISE
-        System.out.println("\n=== TOP 10 TÍTULOS MAIS RECOMENDADOS ===\n");
-
-        // DEFINE LIMITE MÁXIMO
-        int limit = Math.min(10, result.size());
-
-        // CASO NENHUM RESULTADO SEJA ENCONTRADO
-        if (limit == 0) {
-
-        System.out.println(
-                "Nenhum título encontrado com os filtros selecionados."
-        );
-
-        return;
-        }
-
-        // =========================================================
-        // EXIBE OS RESULTADOS
-        // =========================================================
-        for (int i = 0; i < limit; i++) {
-
-        ProgramaNetFlix p = result.get(i);
-
-        System.out.println(
-
-                (i + 1) + ". "
-
-                + p.getTitle()
-
-                + "\nTipo: "
-                + p.getShowType()
-
-                + "\nIMDB Score: "
-                + p.getImdbScore()
-
-                + "\nIMDB Votes: "
-                + p.getImdbVotes()
-
-                + "\nTMDB Popularity: "
-                + p.getTmdbPopularity()
-
-                + "\nClassificação: "
-                + p.getAgeCertification()
-
-                + "\n"
-            );
-        }
-    }
-
-    // ====================================================================
-    // PERCURSO PÓS-ORDEM
-    // (Esquerda → Direita → Raiz)
-    // ====================================================================
-    private static void collectRecommended(
-            Node current,
-            ArrayList<ProgramaNetFlix> result,
-            String genre,
-            String type,
-            String ageCert,
-            double minTmdbPop)
-    {
-
-        // VERIFICA SE O NÓ EXISTE
-        if (current != null) {
-
-            // =====================================================
-            // 1. VISITA A SUBÁRVORE ESQUERDA
-            // =====================================================
-            collectRecommended(
+            // ESQUERDA
+            collectInOrder(
                     current.left,
                     result,
                     genre,
-                    type,
-                    ageCert,
-                    minTmdbPop
+                    minVotes
             );
 
-            // =====================================================
-            // 2. VISITA A SUBÁRVORE DIREITA
-            // =====================================================
-            collectRecommended(
-                    current.right,
-                    result,
-                    genre,
-                    type,
-                    ageCert,
-                    minTmdbPop
-            );
-
-            // =====================================================
-            // 3. PROCESSA O NÓ ATUAL
-            // =====================================================
-
-            // PEGA O PROGRAMA DO NÓ
+            // RAIZ
             ProgramaNetFlix p = current.data;
 
-            // =====================================================
-            // FILTRO 1 - GÊNERO
-            // =====================================================
             boolean validGenre =
 
                     p.getGenres()
@@ -244,156 +121,89 @@ public class Analysis {
                                     genre.toLowerCase()
                             );
 
-            // =====================================================
-            // FILTRO 2 - TIPO
-            // =====================================================
-            boolean validType =
+            boolean validVotes =
 
-                    p.getShowType()
-                            .equalsIgnoreCase(type);
+                    p.getImdbVotes() > minVotes;
 
-            // =====================================================
-            // FILTRO 3 - CLASSIFICAÇÃO INDICATIVA
-            // =====================================================
-            boolean validAge =
-
-                    p.getAgeCertification()
-                            .equalsIgnoreCase(ageCert);
-
-            // =====================================================
-            // FILTRO 4 - POPULARIDADE MÍNIMA
-            // =====================================================
-            boolean validPopularity =
-
-                    p.getTmdbPopularity()
-                            >= minTmdbPop;
-
-            // =====================================================
-            // SE TODOS OS FILTROS FOREM VERDADEIROS
-            // =====================================================
             if (
-
                     validGenre
                     &&
-                    validType
-                    &&
-                    validAge
-                    &&
-                    validPopularity
+                    validVotes
             ) {
 
-                // ADICIONA O TÍTULO NA LISTA
                 result.add(p);
             }
+
+            // DIREITA
+            collectInOrder(
+                    current.right,
+                    result,
+                    genre,
+                    minVotes
+            );
         }
     }
 
     // ====================================================================
-    // ANÁLISE 3 - Títulos mais populares por país e classificação
-    // PERCURSO: EM LARGURA (Nível por Nível usando Fila)
+    // ANÁLISE 2 - Títulos mais recomendados para assistir
+    // PERCURSO: PÓS-ORDEM
     // ====================================================================
-    public static void popularByCountry(
+
+    public static void top10Recommended(
             BST tree,
-            String country,
-            String ageCert
+            String genre,
+            String type,
+            String ageCert,
+            double minTmdbPop
     ) {
 
-        // LISTA QUE ARMAZENARÁ OS TÍTULOS FILTRADOS
         ArrayList<ProgramaNetFlix> result = new ArrayList<>();
 
-        // VERIFICA SE A ÁRVORE ESTÁ VAZIA ANTES DE COMEÇAR
-        if (tree.getRoot() == null) {
-            System.out.println("A árvore está vazia. Carregue os dados primeiro.");
-            return;
-        }
+        collectRecommended(
+                tree.getRoot(),
+                result,
+                genre,
+                type,
+                ageCert,
+                minTmdbPop
+        );
 
-        // =====================================================
-        // PREPARAÇÃO PARA O PERCURSO EM LARGURA
-        // =====================================================
-        Queue<Node> queue = new LinkedList<>();
-        
-        // ADICIONA A RAIZ COMO PONTO DE PARTIDA NA FILA
-        queue.add(tree.getRoot());
-
-        // ENQUANTO A FILA NÃO ESTIVER VAZIA, CONTINUA O PERCURSO
-        while (!queue.isEmpty()) {
-
-            // RETIRA O PRIMEIRO NÓ DA FILA
-            Node current = queue.poll();
-
-            // PEGA O PROGRAMA DO NÓ ATUAL
-            ProgramaNetFlix p = current.data;
-
-            // =====================================================
-            // FILTRO 1 - PAÍS DE PRODUÇÃO
-            // =====================================================
-            boolean validCountry =
-
-                    p.getProductionCountries()
-                            .toUpperCase()
-                            .contains(country.toUpperCase()
-                            );
-
-            // =====================================================
-            // FILTRO 2 - CLASSIFICAÇÃO INDICATIVA
-            // =====================================================
-            boolean validAge =
-
-                    p.getAgeCertification()
-                            .equalsIgnoreCase(ageCert);
-
-            // =====================================================
-            // SE PASSAR NOS FILTROS, ADICIONA NA LISTA
-            // =====================================================
-            if (
-                    validCountry
-                    &&
-                    validAge
-            ) {
-                result.add(p);
-            }
-
-            // =====================================================
-            // ADICIONA OS FILHOS NA FILA (Para serem lidos depois)
-            // =====================================================
-            if (current.left != null) {
-                queue.add(current.left);
-            }
-
-            if (current.right != null) {
-                queue.add(current.right);
-            }
-        }
-
-        // =========================================================
-        // ORDENAÇÃO DOS RESULTADOS
-        // =========================================================
-        // Critério único: Ordem decrescente de Popularidade (TMDB)
+        // ORDENAÇÃO:
+        // 1º maior imdb_score
+        // 2º maior imdb_votes
         result.sort(
 
                 Comparator
+
                         .comparingDouble(
-                                ProgramaNetFlix::getTmdbPopularity
+                                ProgramaNetFlix::getImdbScore
                         )
-                        
-                        // ORDEM DECRESCENTE (Mais populares primeiro)
+
                         .reversed()
+
+                        .thenComparing(
+
+                                Comparator
+                                        .comparingInt(
+                                                ProgramaNetFlix::getImdbVotes
+                                        )
+
+                                        .reversed()
+                        )
         );
 
-        // =========================================================
-        // EXIBE OS RESULTADOS
-        // =========================================================
-        System.out.println("\n=== MAIS POPULARES: " + country.toUpperCase() + " (" + ageCert.toUpperCase() + ") ===\n");
+        System.out.println(
+                "\n=== TÍTULOS MAIS RECOMENDADOS ===\n"
+        );
 
-        // DEFINE LIMITE MÁXIMO DE 10 PARA NÃO POLUIR A TELA
         int limit = Math.min(10, result.size());
 
         if (limit == 0) {
-            
+
             System.out.println(
-                    "Nenhum título encontrado para este país com essa classificação."
+                    "Nenhum título encontrado."
             );
-            
+
             return;
         }
 
@@ -407,11 +217,14 @@ public class Analysis {
 
                     + p.getTitle()
 
-                    + "\nPaíses: "
-                    + p.getProductionCountries()
+                    + "\nTipo: "
+                    + p.getShowType()
 
-                    + "\nClassificação: "
-                    + p.getAgeCertification()
+                    + "\nIMDB Score: "
+                    + p.getImdbScore()
+
+                    + "\nIMDB Votes: "
+                    + p.getImdbVotes()
 
                     + "\nTMDB Popularity: "
                     + p.getTmdbPopularity()
@@ -422,66 +235,344 @@ public class Analysis {
     }
 
     // ====================================================================
-    // ANÁLISE 4 - Divergência entre avaliações IMDB e TMDB em séries
-    // PERCURSO: PRÉ-ORDEM (Raiz -> Esquerda -> Direita)
+    // PERCURSO EM PÓS-ORDEM
+    // ESQUERDA -> DIREITA -> RAIZ
     // ====================================================================
-    
-    public static void seriesDivergence(
+
+    private static void collectRecommended(
+            Node current,
+            ArrayList<ProgramaNetFlix> result,
+            String genre,
+            String type,
+            String ageCert,
+            double minTmdbPop
+    ) {
+
+        if (current != null) {
+
+            // ESQUERDA
+            collectRecommended(
+                    current.left,
+                    result,
+                    genre,
+                    type,
+                    ageCert,
+                    minTmdbPop
+            );
+
+            // DIREITA
+            collectRecommended(
+                    current.right,
+                    result,
+                    genre,
+                    type,
+                    ageCert,
+                    minTmdbPop
+            );
+
+            // RAIZ
+            ProgramaNetFlix p = current.data;
+
+            boolean validGenre =
+
+                    p.getGenres()
+                            .toLowerCase()
+                            .contains(
+                                    genre.toLowerCase()
+                            );
+
+            boolean validType =
+
+                    p.getShowType()
+                            .equalsIgnoreCase(type);
+
+            boolean validAge =
+
+                    p.getAgeCertification()
+                            .equalsIgnoreCase(ageCert);
+
+            boolean validPopularity =
+
+                    p.getTmdbPopularity()
+                            >= minTmdbPop;
+
+            if (
+                    validGenre
+                    &&
+                    validType
+                    &&
+                    validAge
+                    &&
+                    validPopularity
+            ) {
+
+                result.add(p);
+            }
+        }
+    }
+
+    // ====================================================================
+    // ANÁLISE 3 - Títulos mais populares por país e classificação
+    // PERCURSO: EM LARGURA (BFS)
+    // ====================================================================
+
+    public static void popularByCountry(
             BST tree,
-            int minSeasons,
-            int releaseYear
+            String country,
+            String ageCert,
+            int limit
     ) {
 
         ArrayList<ProgramaNetFlix> result = new ArrayList<>();
 
-        collectPreOrder(tree.getRoot(), result, minSeasons, releaseYear);
+        if (tree.getRoot() == null) {
 
-        if (result.isEmpty()) {
-            System.out.println("Nenhuma série encontrada com esses critérios.");
+            System.out.println(
+                    "A árvore está vazia."
+            );
+
             return;
         }
 
-        // =========================================================
-        // CÁLCULO DA MÉDIA GERAL (Antes de cortar para o Top 10)
-        // =========================================================
-        double somaDivergenciasGeral = 0;
-        for (ProgramaNetFlix p : result) {
-            somaDivergenciasGeral += Math.abs(p.getImdbScore() - p.getTmdbScore());
-        }
-        double mediaGeral = somaDivergenciasGeral / result.size();
+        // FILA PARA BFS
+        Queue<Node> queue = new LinkedList<>();
 
-        // =========================================================
-        // ORDENAÇÃO: Maior diferença absoluta entre as notas
-        // =========================================================
+        queue.add(tree.getRoot());
+
+        // PERCURSO EM LARGURA
+        while (!queue.isEmpty()) {
+
+            Node current = queue.poll();
+
+            ProgramaNetFlix p = current.data;
+
+            // FILTRO DE PAÍS
+            boolean validCountry =
+
+                    p.getProductionCountries()
+                            .toUpperCase()
+                            .contains(
+                                    country.toUpperCase()
+                            );
+
+            // FILTRO DE CLASSIFICAÇÃO
+            boolean validAge =
+
+                    p.getAgeCertification()
+                            .equalsIgnoreCase(ageCert);
+
+            if (
+                    validCountry
+                    &&
+                    validAge
+            ) {
+
+                result.add(p);
+            }
+
+            // FILHO ESQUERDO
+            if (current.left != null) {
+
+                queue.add(current.left);
+            }
+
+            // FILHO DIREITO
+            if (current.right != null) {
+
+                queue.add(current.right);
+            }
+        }
+
+        // ORDENAÇÃO:
+        // 1º maior tmdb_popularity
+        // 2º maior imdb_score
+        result.sort(
+
+                Comparator
+
+                        .comparingDouble(
+                                ProgramaNetFlix::getTmdbPopularity
+                        )
+
+                        .reversed()
+
+                        .thenComparing(
+
+                                Comparator
+                                        .comparingDouble(
+                                                ProgramaNetFlix::getImdbScore
+                                        )
+
+                                        .reversed()
+                        )
+        );
+
+        System.out.println(
+
+                "\n=== MAIS POPULARES | "
+                + country
+                + " | "
+                + ageCert
+                + " ===\n"
+        );
+
+        limit = Math.min(limit, result.size());
+
+        if (limit == 0) {
+
+            System.out.println(
+                    "Nenhum título encontrado."
+            );
+
+            return;
+        }
+
+        for (int i = 0; i < limit; i++) {
+
+            ProgramaNetFlix p = result.get(i);
+
+            System.out.println(
+
+                    (i + 1) + ". "
+
+                    + p.getTitle()
+
+                    + "\nTMDB Popularity: "
+                    + p.getTmdbPopularity()
+
+                    + "\nIMDB Score: "
+                    + p.getImdbScore()
+
+                    + "\nPaíses: "
+                    + p.getProductionCountries()
+
+                    + "\nClassificação: "
+                    + p.getAgeCertification()
+
+                    + "\n"
+            );
+        }
+    }
+
+    // ====================================================================
+    // ANÁLISE 4 - Divergência IMDB vs TMDB
+    // PERCURSO: PRÉ-ORDEM
+    // ====================================================================
+
+    public static void seriesDivergence(
+            BST tree,
+            int minSeasons,
+            int releaseYear,
+            int limit
+    ) {
+
+        ArrayList<ProgramaNetFlix> result = new ArrayList<>();
+
+        collectPreOrder(
+                tree.getRoot(),
+                result,
+                minSeasons,
+                releaseYear
+        );
+
+        if (result.isEmpty()) {
+
+            System.out.println(
+                    "Nenhuma série encontrada."
+            );
+
+            return;
+        }
+
+        // CÁLCULO DA MÉDIA DAS DIVERGÊNCIAS
+        double totalDifference = 0;
+
+        for (ProgramaNetFlix p : result) {
+
+            totalDifference += Math.abs(
+
+                    p.getImdbScore()
+                    -
+                    p.getTmdbScore()
+            );
+        }
+
+        double averageDifference =
+
+                totalDifference / result.size();
+
+        // ORDENA POR MAIOR DIFERENÇA
         result.sort((p1, p2) -> {
-            
-            double diff1 = Math.abs(p1.getImdbScore() - p1.getTmdbScore());
-            double diff2 = Math.abs(p2.getImdbScore() - p2.getTmdbScore());
-            
-            // Ordem decrescente (maior divergência primeiro)
+
+            double diff1 = Math.abs(
+
+                    p1.getImdbScore()
+                    -
+                    p1.getTmdbScore()
+            );
+
+            double diff2 = Math.abs(
+
+                    p2.getImdbScore()
+                    -
+                    p2.getTmdbScore()
+            );
+
             return Double.compare(diff2, diff1);
         });
 
-        System.out.println("\n=== SÉRIES COM MAIOR DIVERGÊNCIA DE NOTAS ===\n");
-        
-        int limit = Math.min(10, result.size());
+        System.out.println(
+                "\n=== MAIOR DIVERGÊNCIA IMDB vs TMDB ===\n"
+        );
+
+        limit = Math.min(limit, result.size());
 
         for (int i = 0; i < limit; i++) {
-            
+
             ProgramaNetFlix p = result.get(i);
-            
-            double diff = Math.abs(p.getImdbScore() - p.getTmdbScore());
-            
-            System.out.printf("%d. %s (Ano: %d, Temp: %d)\n", (i+1), p.getTitle(), p.getReleaseYear(), p.getSeasons());
-            System.out.printf("   IMDB: %.1f | TMDB: %.1f | Diferença: %.2f\n\n", p.getImdbScore(), p.getTmdbScore(), diff);
+
+            double difference = Math.abs(
+
+                    p.getImdbScore()
+                    -
+                    p.getTmdbScore()
+            );
+
+            System.out.printf(
+
+                    "%d. %s\n",
+                    (i + 1),
+                    p.getTitle()
+            );
+
+            System.out.printf(
+                    "Ano: %d | Temporadas: %d\n",
+                    p.getReleaseYear(),
+                    p.getSeasons()
+            );
+
+            System.out.printf(
+                    "IMDB: %.1f | TMDB: %.1f | Diferença: %.2f\n\n",
+                    p.getImdbScore(),
+                    p.getTmdbScore(),
+                    difference
+            );
         }
 
-        System.out.printf("--- Média GERAL de divergência (%d séries analisadas): %.2f ---\n", result.size(), mediaGeral);
+        System.out.printf(
+
+                "--- Média geral das divergências (%d séries): %.2f ---%n",
+
+                result.size(),
+                averageDifference
+        );
     }
 
     // ====================================================================
     // PERCURSO PRÉ-ORDEM
+    // RAIZ -> ESQUERDA -> DIREITA
     // ====================================================================
+
     private static void collectPreOrder(
             Node current,
             ArrayList<ProgramaNetFlix> result,
@@ -491,24 +582,229 @@ public class Analysis {
 
         if (current != null) {
 
-            // 1. PROCESSA A RAIZ (Nó atual)
+            // RAIZ
             ProgramaNetFlix p = current.data;
 
+            boolean validType =
+
+                    p.getShowType()
+                            .equalsIgnoreCase("SHOW");
+
+            boolean validSeasons =
+
+                    p.getSeasons() >= minSeasons;
+
+            boolean validYear =
+
+                    p.getReleaseYear() >= releaseYear;
+
+            boolean validScores =
+
+                    p.getImdbScore() > 0
+                    &&
+                    p.getTmdbScore() > 0;
+
             if (
-                    p.getShowType().equalsIgnoreCase("SHOW") 
-                    && p.getSeasons() >= minSeasons 
-                    && p.getReleaseYear() >= releaseYear 
-                    && p.getTmdbScore() > 0 
+                    validType
+                    &&
+                    validSeasons
+                    &&
+                    validYear
+                    &&
+                    validScores
             ) {
+
                 result.add(p);
             }
-            
-            // 2. DESCER PARA A ESQUERDA
-            collectPreOrder(current.left, result, minSeasons, releaseYear);
-            
-            // 3. DESCER PARA A DIREITA
-            collectPreOrder(current.right, result, minSeasons, releaseYear);
+
+            // ESQUERDA
+            collectPreOrder(
+                    current.left,
+                    result,
+                    minSeasons,
+                    releaseYear
+            );
+
+            // DIREITA
+            collectPreOrder(
+                    current.right,
+                    result,
+                    minSeasons,
+                    releaseYear
+            );
         }
     }
 
+    // ====================================================================
+    // ANÁLISE 5 - Filmes subestimados por palavra-chave
+    // PERCURSO: EM ORDEM SIMÉTRICA
+    // ====================================================================
+
+    public static void underestimatedMovies(
+            BST tree,
+            String keyword,
+            double maxPopularity,
+            double minScore
+    ) {
+
+        ArrayList<ProgramaNetFlix> result = new ArrayList<>();
+
+        collectUnderestimated(
+
+                tree.getRoot(),
+                result,
+                keyword,
+                maxPopularity,
+                minScore
+        );
+
+        // ORDENAÇÃO:
+        // 1º maior imdb_score
+        // 2º menor tmdb_popularity
+        result.sort(
+
+                Comparator
+
+                        .comparingDouble(
+                                ProgramaNetFlix::getImdbScore
+                        )
+
+                        .reversed()
+
+                        .thenComparing(
+
+                                Comparator
+                                        .comparingDouble(
+                                                ProgramaNetFlix::getTmdbPopularity
+                                        )
+                        )
+        );
+
+        System.out.println(
+                "\n=== FILMES SUBESTIMADOS ===\n"
+        );
+
+        int limit = Math.min(10, result.size());
+
+        if (limit == 0) {
+
+            System.out.println(
+                    "Nenhum filme encontrado."
+            );
+
+            return;
+        }
+
+        for (int i = 0; i < limit; i++) {
+
+            ProgramaNetFlix p = result.get(i);
+
+            System.out.println(
+
+                    (i + 1) + ". "
+
+                    + p.getTitle()
+
+                    + "\nIMDB Score: "
+                    + p.getImdbScore()
+
+                    + "\nTMDB Popularity: "
+                    + p.getTmdbPopularity()
+
+                    + "\nTipo: "
+                    + p.getShowType()
+
+                    + "\n"
+            );
+        }
+    }
+
+    // ====================================================================
+    // PERCURSO EM ORDEM SIMÉTRICA
+    // ESQUERDA -> RAIZ -> DIREITA
+    // ====================================================================
+
+    private static void collectUnderestimated(
+            Node current,
+            ArrayList<ProgramaNetFlix> result,
+            String keyword,
+            double maxPopularity,
+            double minScore
+    ) {
+
+        if (current != null) {
+
+            // ESQUERDA
+            collectUnderestimated(
+
+                    current.left,
+                    result,
+                    keyword,
+                    maxPopularity,
+                    minScore
+            );
+
+            // RAIZ
+            ProgramaNetFlix p = current.data;
+
+            // APENAS FILMES
+            boolean validType =
+
+                    p.getShowType()
+                            .equalsIgnoreCase("MOVIE");
+
+            // PALAVRA-CHAVE NO TÍTULO
+            boolean validKeyword =
+
+                    p.getTitle()
+                            .toLowerCase()
+                            .contains(
+                                    keyword.toLowerCase()
+                            );
+
+            // POPULARIDADE BAIXA
+            boolean validPopularity =
+
+                    p.getTmdbPopularity()
+                            <= maxPopularity;
+
+            // NOTA ALTA
+            boolean validScore =
+
+                    p.getImdbScore()
+                            >= minScore;
+
+            // SCORES VÁLIDOS
+            boolean validValues =
+
+                    p.getImdbScore() > 0
+                    &&
+                    p.getTmdbPopularity() > 0;
+
+            if (
+                    validType
+                    &&
+                    validKeyword
+                    &&
+                    validPopularity
+                    &&
+                    validScore
+                    &&
+                    validValues
+            ) {
+
+                result.add(p);
+            }
+
+            // DIREITA
+            collectUnderestimated(
+
+                    current.right,
+                    result,
+                    keyword,
+                    maxPopularity,
+                    minScore
+            );
+        }
+    }
 }
