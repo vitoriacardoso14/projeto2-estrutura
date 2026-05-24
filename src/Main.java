@@ -1,74 +1,104 @@
+/*
+PROJETO 2 - BST NETFLIX
+Disciplina: Estrutura de Dados
+
+Integrantes:
+- Vitória Cardoso Alves - 10735648
+- Bruno Malagoli - 10736098
+*/
+
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        // =====================================================
-        // CRIA A BST
-        // =====================================================
-
+        // CRIAÇÃO DA ÁRVORE BST
+        // Aqui criamos a árvore binária de busca que armazenará
+        // todos os programas Netflix carregados do CSV.
         BST tree = new BST();
 
-        // =====================================================
-        // CARREGA O DATASET CSV
-        // =====================================================
-
-        Loader.loadData("../data/titles.csv", tree);
-
-        // =====================================================
-        // SCANNER PARA LEITURA DO TECLADO
-        // =====================================================
-
+        // Scanner utilizado para ler dados digitados pelo usuário.
         Scanner sc = new Scanner(System.in);
 
-        int option;
+        // CONTROLE DO MENU
+        // Essa variável controla o loop principal do sistema.
+        // Enquanto running = true, o menu continua aparecendo.
+        boolean running = true;
 
-        // =====================================================
-        // MENU PRINCIPAL
-        // =====================================================
+        // LOOP PRINCIPAL DO SISTEMA
 
-        do {
+        while (running) {
 
-            System.out.println("\n===== MENU =====");
+            // MENU PRINCIPAL
 
-            System.out.println("1 - Top 10 títulos por gênero e avaliação");
+            System.out.println("      SISTEMA NETFLIX - BST");
 
-            System.out.println("2 - Títulos mais recomendados para assistir");
+            System.out.println("1  - Ler dataset");
 
-            System.out.println("3 - Títulos mais populares por país e classificação indicativa");
+            System.out.println("\n========== ANÁLISES ==========");
 
-            System.out.println("4 - Divergência entre avaliações IMDB e TMDB em séries");
+            System.out.println("(2)  - Top 10 títulos por gênero e avaliação");
+            System.out.println("(3)  - Títulos mais recomendados para assistir");
+            System.out.println("(4)  - Títulos mais populares por país e classificação indicativa");
+            System.out.println("(5)  - Divergência entre avaliações IMDB e TMDB em séries");
+            System.out.println("(6)  - Filmes subestimados por palavra-chave");
 
-            System.out.println("5 - Filmes subestimados por palavra-chave");
+            System.out.println("\n========== BST ==========");
 
-            System.out.println("0 - Sair");
+            System.out.println("(7)  - Inserir programa");
+            System.out.println("(8)  - Buscar programa");
+            System.out.println("(9)  - Remover programa");
+
+            System.out.println("\n========== ÁRVORE ==========");
+
+            System.out.println("(10) - Exibir altura da árvore");
+
+            System.out.println("\n========== ARQUIVOS ==========");
+
+            System.out.println("(11) - Salvar dados em arquivo");
+
+            System.out.println("\n(0)  - Encerrar aplicação");
 
             System.out.print("\nEscolha uma opção: ");
 
-            option = sc.nextInt();
+            int option = sc.nextInt();
 
+            // LIMPA O BUFFER DO TECLADO
             sc.nextLine();
 
-            // =====================================================
-            // SWITCH PRINCIPAL
-            // =====================================================
+            // SWITCH DAS OPÇÕES
 
             switch (option) {
 
-                // =====================================================
-                // ANÁLISE 1
-                // =====================================================
-
+                // OPÇÃO 1 - LER DATASET
                 case 1:
 
-                    System.out.println("\n=== GÊNEROS ===");
+                    System.out.print(
+                            "\nDigite o nome do arquivo CSV: "
+                    );
 
-                    System.out.println("(1) - Crime");
+                    String fileName = sc.nextLine();
+
+                    Loader.loadData(
+                            "../data/" + fileName,
+                            tree
+                    );
+
+                    break;
+
+
+                // OPÇÃO 2 - ANÁLISE 1
+                // TOP 10 TÍTULOS POR GÊNERO E AVALIAÇÃO
+                case 2: {
+
+                    System.out.println("\n=== GÊNEROS DISPONÍVEIS ===");
+
+                    System.out.println("(1) - Comédia");
                     System.out.println("(2) - Drama");
-                    System.out.println("(3) - Comédia");
-                    System.out.println("(4) - Ação");
-                    System.out.println("(5) - Romance");
+                    System.out.println("(3) - Crime");
+                    System.out.println("(4) - Romance");
+                    System.out.println("(5) - Ação");
 
                     System.out.print("\nEscolha um gênero: ");
 
@@ -76,13 +106,12 @@ public class Main {
 
                     sc.nextLine();
 
-                    // GÊNERO NO FORMATO DO DATASET
                     String genre = "";
 
                     switch (genreOption) {
 
                         case 1:
-                            genre = "crime";
+                            genre = "comedy";
                             break;
 
                         case 2:
@@ -90,33 +119,35 @@ public class Main {
                             break;
 
                         case 3:
-                            genre = "comedy";
+                            genre = "crime";
                             break;
 
                         case 4:
-                            genre = "action";
+                            genre = "romance";
                             break;
 
                         case 5:
-                            genre = "romance";
+                            genre = "action";
                             break;
 
                         default:
 
-                            System.out.println("\nGênero inválido.");
-                            break;
+                            System.out.println(
+                                    "\nGênero inválido."
+                            );
                     }
 
-                    // SÓ EXECUTA SE O GÊNERO FOR VÁLIDO
+                    System.out.print(
+                            "\nDigite o número mínimo de votos: "
+                    );
+
+                    int minVotes = sc.nextInt();
+
+                    sc.nextLine();
+
+                    // EXECUTA A ANÁLISE
                     if (!genre.equals("")) {
 
-                        System.out.print(
-                                "\nDigite o número mínimo de votos: "
-                        );
-
-                        int minVotes = sc.nextInt();
-
-                        // CHAMA A ANÁLISE
                         Analysis.top10ByGenre(
                                 tree,
                                 genre,
@@ -125,60 +156,60 @@ public class Main {
                     }
 
                     break;
+                }
 
-                // =====================================================
-                // ANÁLISE 2
-                // =====================================================
+                // OPÇÃO 3 - ANÁLISE 2
+                // TÍTULOS MAIS RECOMENDADOS PARA ASSISTIR
+                case 3: {
 
-                case 2:
-
-                    // ESCOLHA DO GÊNERO
+                    // GÊNEROS
 
                     System.out.println("\n=== GÊNEROS ===");
 
-                    System.out.println("(1) - Crime");
+                    System.out.println("(1) - Comédia");
                     System.out.println("(2) - Drama");
-                    System.out.println("(3) - Comédia");
-                    System.out.println("(4) - Ação");
-                    System.out.println("(5) - Romance");
+                    System.out.println("(3) - Crime");
+                    System.out.println("(4) - Romance");
+                    System.out.println("(5) - Ação");
 
                     System.out.print("\nEscolha um gênero: ");
 
-                    int genreOption2 = sc.nextInt();
+                    int genreOption = sc.nextInt();
 
                     sc.nextLine();
 
-                    String genre2 = "";
+                    String genre = "";
 
-                    switch (genreOption2) {
+                    switch (genreOption) {
 
                         case 1:
-                            genre2 = "crime";
+                            genre = "comedy";
                             break;
 
                         case 2:
-                            genre2 = "drama";
+                            genre = "drama";
                             break;
 
                         case 3:
-                            genre2 = "comedy";
+                            genre = "crime";
                             break;
 
                         case 4:
-                            genre2 = "action";
+                            genre = "romance";
                             break;
 
                         case 5:
-                            genre2 = "romance";
+                            genre = "action";
                             break;
 
                         default:
 
-                            System.out.println("\nGênero inválido.");
-                            break;
+                            System.out.println(
+                                    "\nGênero inválido."
+                            );
                     }
 
-                    // ESCOLHA DO TIPO
+                    // TIPO
 
                     System.out.println("\n=== TIPO ===");
 
@@ -205,54 +236,56 @@ public class Main {
 
                         default:
 
-                            System.out.println("\nTipo inválido.");
-                            break;
+                            System.out.println(
+                                    "\nTipo inválido."
+                            );
                     }
 
-                    // ESCOLHA DA CLASSIFICAÇÃO
+                    // CLASSIFICAÇÃO
 
                     System.out.println("\n=== CLASSIFICAÇÃO INDICATIVA ===");
 
-                    System.out.println("(1) - TV-MA  | Conteúdo adulto");
-                    System.out.println("(2) - TV-14 | Maiores de 14 anos");
-                    System.out.println("(3) - PG-13 | Maiores de 13 anos");
-                    System.out.println("(4) - R     | Restrito para menores");
-                    System.out.println("(5) - PG    | Orientação dos pais");
+                    System.out.println("(1) - Adulto");
+                    System.out.println("(2) - Maiores de 14");
+                    System.out.println("(3) - Maiores de 13");
+                    System.out.println("(4) - Restrito");
+                    System.out.println("(5) - Livre supervisionado");
 
                     System.out.print("\nEscolha a classificação: ");
 
-                    int ageOption2 = sc.nextInt();
+                    int ageOption = sc.nextInt();
 
                     sc.nextLine();
 
-                    String ageCert2 = "";
+                    String ageCert = "";
 
-                    switch (ageOption2) {
+                    switch (ageOption) {
 
                         case 1:
-                            ageCert2 = "TV-MA";
+                            ageCert = "TV-MA";
                             break;
 
                         case 2:
-                            ageCert2 = "TV-14";
+                            ageCert = "TV-14";
                             break;
 
                         case 3:
-                            ageCert2 = "PG-13";
+                            ageCert = "PG-13";
                             break;
 
                         case 4:
-                            ageCert2 = "R";
+                            ageCert = "R";
                             break;
 
                         case 5:
-                            ageCert2 = "PG";
+                            ageCert = "PG";
                             break;
 
                         default:
 
-                            System.out.println("\nClassificação inválida.");
-                            break;
+                            System.out.println(
+                                    "\nClassificação inválida."
+                            );
                     }
 
                     // POPULARIDADE MÍNIMA
@@ -263,43 +296,40 @@ public class Main {
 
                     double minPopularity = sc.nextDouble();
 
-                    // EXECUTA A ANÁLISE
+                    sc.nextLine();
+
+                    // EXECUTA ANÁLISE
 
                     if (
-                            !genre2.equals("")
+                            !genre.equals("")
                             &&
                             !type.equals("")
                             &&
-                            !ageCert2.equals("")
+                            !ageCert.equals("")
                     ) {
 
                         Analysis.top10Recommended(
-
                                 tree,
-                                genre2,
+                                genre,
                                 type,
-                                ageCert2,
+                                ageCert,
                                 minPopularity
                         );
                     }
 
                     break;
+                }
 
-                // =====================================================
-                // ANÁLISE 3
-                // =====================================================
+                // OPÇÃO 4 - ANÁLISE 3
+                case 4: {
 
-                case 3: {
+                    System.out.println("\n=== PAÍSES ===");
 
-                    // ESCOLHA DO PAÍS
-
-                    System.out.println("\n=== PAÍSES DE PRODUÇÃO ===");
-
-                    System.out.println("(1) - Estados Unidos (US)");
-                    System.out.println("(2) - Brasil (BR)");
-                    System.out.println("(3) - Reino Unido (GB)");
-                    System.out.println("(4) - Japão (JP)");
-                    System.out.println("(5) - Coreia do Sul (KR)");
+                    System.out.println("(1) - Estados Unidos");
+                    System.out.println("(2) - Brasil");
+                    System.out.println("(3) - Reino Unido");
+                    System.out.println("(4) - Japão");
+                    System.out.println("(5) - Coreia do Sul");
 
                     System.out.print("\nEscolha um país: ");
 
@@ -333,102 +363,94 @@ public class Main {
 
                         default:
 
-                            System.out.println("\nPaís inválido.");
-                            break;
+                            System.out.println(
+                                    "\nPaís inválido."
+                            );
                     }
 
-                    // CLASSIFICAÇÃO INDICATIVA
+                    System.out.println("\n=== CLASSIFICAÇÃO ===");
 
-                    System.out.println("\n=== CLASSIFICAÇÃO INDICATIVA ===");
-
-                    System.out.println("(1) - TV-MA  | Conteúdo adulto");
-                    System.out.println("(2) - TV-14 | Maiores de 14 anos");
-                    System.out.println("(3) - PG-13 | Maiores de 13 anos");
-                    System.out.println("(4) - R     | Restrito para menores");
-                    System.out.println("(5) - PG    | Orientação dos pais");
+                    System.out.println("(1) - Adulto");
+                    System.out.println("(2) - Maiores de 14");
+                    System.out.println("(3) - Maiores de 13");
+                    System.out.println("(4) - Restrito");
+                    System.out.println("(5) - Livre supervisionado");
 
                     System.out.print("\nEscolha a classificação: ");
 
-                    int ageOption3 = sc.nextInt();
+                    int ageOption = sc.nextInt();
 
                     sc.nextLine();
 
-                    String ageCert3 = "";
+                    String ageCert = "";
 
-                    switch (ageOption3) {
+                    switch (ageOption) {
 
                         case 1:
-                            ageCert3 = "TV-MA";
+                            ageCert = "TV-MA";
                             break;
 
                         case 2:
-                            ageCert3 = "TV-14";
+                            ageCert = "TV-14";
                             break;
 
                         case 3:
-                            ageCert3 = "PG-13";
+                            ageCert = "PG-13";
                             break;
 
                         case 4:
-                            ageCert3 = "R";
+                            ageCert = "R";
                             break;
 
                         case 5:
-                            ageCert3 = "PG";
+                            ageCert = "PG";
                             break;
 
                         default:
 
-                            System.out.println("\nClassificação inválida.");
-                            break;
+                            System.out.println(
+                                    "\nClassificação inválida."
+                            );
                     }
 
-                    // QUANTIDADE DE RESULTADOS
-
                     System.out.print(
-                            "\nQuantos títulos deseja visualizar? "
+                            "\nQuantidade de resultados: "
                     );
 
-                    int limit3 = sc.nextInt();
+                    int limit = sc.nextInt();
 
-                    // EXECUTA A ANÁLISE
+                    sc.nextLine();
 
                     if (
                             !country.equals("")
                             &&
-                            !ageCert3.equals("")
+                            !ageCert.equals("")
                     ) {
 
                         Analysis.popularByCountry(
-
                                 tree,
                                 country,
-                                ageCert3,
-                                limit3
+                                ageCert,
+                                limit
                         );
                     }
 
                     break;
                 }
 
-                // =====================================================
-                // ANÁLISE 4
-                // =====================================================
-
-                case 4: {
+                // OPÇÃO 5 - ANÁLISE 4
+                case 5: {
 
                     System.out.println(
-                            "\n=== DIVERGÊNCIA IMDB vs TMDB EM SÉRIES ==="
+                            "\n=== DIVERGÊNCIA IMDB vs TMDB ==="
                     );
 
                     int minSeasons = 0;
 
-                    // VALIDAÇÃO DAS TEMPORADAS
-
                     while (minSeasons < 3) {
 
                         System.out.print(
-                                "\nDigite o número mínimo de temporadas (mínimo: 3): "
+                                "\nDigite o mínimo de temporadas (>=3): "
                         );
 
                         minSeasons = sc.nextInt();
@@ -436,71 +458,55 @@ public class Main {
                         if (minSeasons < 3) {
 
                             System.out.println(
-                                    "Erro: a análise exige no mínimo 3 temporadas."
+                                    "\nValor inválido."
                             );
                         }
                     }
 
-                    // ANO MÍNIMO
-
                     System.out.print(
-                            "\nDigite o ano mínimo de lançamento das séries: "
+                            "\nDigite o ano mínimo de lançamento: "
                     );
 
                     int releaseYear = sc.nextInt();
 
-                    // QUANTIDADE DE RESULTADOS
-
                     System.out.print(
-                            "\nQuantas séries deseja visualizar? "
+                            "\nQuantidade de resultados: "
                     );
 
-                    int limit4 = sc.nextInt();
+                    int limit = sc.nextInt();
 
                     sc.nextLine();
 
-                    // EXECUTA A ANÁLISE
-
                     Analysis.seriesDivergence(
-
                             tree,
                             minSeasons,
                             releaseYear,
-                            limit4
+                            limit
                     );
 
                     break;
                 }
 
-                // =====================================================
-                // ANÁLISE 5
-                // =====================================================
-
-                case 5: {
-
-                    // =====================================================
-                    // PALAVRAS-CHAVE DISPONÍVEIS
-                    // =====================================================
+                // OPÇÃO 6 - ANÁLISE 5
+                case 6: {
 
                     System.out.println("\n=== PALAVRAS-CHAVE ===");
 
-                    System.out.println("(1) - amor");
-                    System.out.println("(2) - guerra");
-                    System.out.println("(3) - vida");
-                    System.out.println("(4) - morte");
-                    System.out.println("(5) - noite");
-                    System.out.println("(6) - família");
-                    System.out.println("(7) - escola");
+                    System.out.println("(1) - Amor");
+                    System.out.println("(2) - Guerra");
+                    System.out.println("(3) - Vida");
+                    System.out.println("(4) - Morte");
+                    System.out.println("(5) - Noite");
+                    System.out.println("(6) - Família");
+                    System.out.println("(7) - Escola");
 
-                    System.out.print("\nEscolha uma palavra-chave: ");
+                    System.out.print(
+                            "\nEscolha uma palavra-chave: "
+                    );
 
                     int keywordOption = sc.nextInt();
 
                     sc.nextLine();
-
-                    // =====================================================
-                    // CONVERTE OPÇÃO EM PALAVRA
-                    // =====================================================
 
                     String keyword = "";
 
@@ -536,23 +542,17 @@ public class Main {
 
                         default:
 
-                            System.out.println("\nPalavra-chave inválida.");
+                            System.out.println(
+                                    "\nPalavra inválida."
+                            );
                             break;
                     }
 
-                    // =====================================================
-                    // POPULARIDADE MÁXIMA
-                    // =====================================================
-
                     System.out.print(
-                            "\nDigite a popularidade máxima no TMDB: "
+                            "\nDigite a popularidade máxima: "
                     );
 
                     double maxPopularity = sc.nextDouble();
-
-                    // =====================================================
-                    // NOTA MÍNIMA DO IMDB
-                    // =====================================================
 
                     System.out.print(
                             "\nDigite a nota mínima do IMDB: "
@@ -560,14 +560,11 @@ public class Main {
 
                     double minScore = sc.nextDouble();
 
-                    // =====================================================
-                    // EXECUTA A ANÁLISE
-                    // =====================================================
+                    sc.nextLine();
 
                     if (!keyword.equals("")) {
 
                         Analysis.underestimatedMovies(
-
                                 tree,
                                 keyword,
                                 maxPopularity,
@@ -578,58 +575,297 @@ public class Main {
                     break;
                 }
 
-                // =====================================================
-                // SAIR
-                // =====================================================
+            // OPÇÃO 7 - INSERIR PROGRAMA
+            case 7: {
 
+                System.out.println("\n=== INSERIR NOVO PROGRAMA ===");
+
+                // TIPO DO PROGRAMA
+
+                System.out.println("(1) - FILME");
+                System.out.println("(2) - SÉRIE");
+
+                System.out.print("\nEscolha o tipo: ");
+
+                int typeOption = sc.nextInt();
+
+                sc.nextLine();
+
+                String showType = "";
+
+                // GERA O PREFIXO DO ID
+
+                if (typeOption == 1) {
+
+                    showType = "MOVIE";
+
+                } else if (typeOption == 2) {
+
+                    showType = "SHOW";
+
+                } else {
+
+                    System.out.println("\nTipo inválido.");
+
+                    break;
+                }
+
+                // GERA ID AUTOMÁTICO
+
+                // tm = movie
+                // ts = show
+
+                long uniqueNumber = System.currentTimeMillis();
+
+                String id;
+
+                if (showType.equals("MOVIE")) {
+
+                    id = "tm" + uniqueNumber;
+
+                } else {
+
+                    id = "ts" + uniqueNumber;
+                }
+
+                // LEITURA DOS DADOS
+
+                System.out.print("\nTítulo: ");
+                String title = sc.nextLine();
+
+                System.out.print("Descrição: ");
+                String description = sc.nextLine();
+
+                System.out.print("Ano de lançamento: ");
+                int releaseYear = sc.nextInt();
+
+                System.out.print("Duração: ");
+                int runtime = sc.nextInt();
+
+                sc.nextLine();
+
+                System.out.print("Gêneros: ");
+                String genres = sc.nextLine();
+
+                System.out.print("Países de produção: ");
+                String countries = sc.nextLine();
+
+                System.out.print("Quantidade de temporadas: ");
+                int seasons = sc.nextInt();
+
+                sc.nextLine();
+
+                System.out.print("Classificação indicativa: ");
+                String ageCertification = sc.nextLine();
+
+                System.out.print("IMDB ID: ");
+                String imdbId = sc.nextLine();
+
+                System.out.print("IMDB Score: ");
+                double imdbScore = sc.nextDouble();
+
+                System.out.print("IMDB Votes: ");
+                int imdbVotes = sc.nextInt();
+
+                System.out.print("TMDB Popularity: ");
+                double tmdbPopularity = sc.nextDouble();
+
+                System.out.print("TMDB Score: ");
+                double tmdbScore = sc.nextDouble();
+
+                sc.nextLine();
+
+                // CRIA OBJETO
+
+                ProgramaNetFlix program = new ProgramaNetFlix(
+
+                        id,
+                        title,
+                        showType,
+                        description,
+                        releaseYear,
+                        ageCertification,
+                        runtime,
+                        genres,
+                        countries,
+                        seasons,
+                        imdbId,
+                        imdbScore,
+                        imdbVotes,
+                        tmdbPopularity,
+                        tmdbScore
+                );
+
+                // INSERE NA BST
+
+                tree.insert(program);
+
+                System.out.println(
+                        "\nPrograma inserido com sucesso!"
+                );
+
+                System.out.println("ID gerado: " + id);
+
+                break;
+            }
+
+            // OPÇÃO 8 - BUSCAR PROGRAMA
+            case 8: {
+
+                System.out.println("\n=== BUSCAR PROGRAMA ===");
+
+                System.out.print("\nDigite o ID do programa: ");
+
+                String id = sc.nextLine();
+
+                // MONITORAMENTO DE TEMPO
+
+                long startTime = System.nanoTime();
+
+                ProgramaNetFlix result = tree.search(id);
+
+                long endTime = System.nanoTime();
+
+                long executionTime = endTime - startTime;
+
+                // EXIBE RESULTADO
+
+                if (result != null) {
+
+                    System.out.println("\n=== PROGRAMA ENCONTRADO ===\n");
+
+                    System.out.println("ID: " + result.getId());
+
+                    System.out.println("Título: " + result.getTitle());
+
+                    System.out.println("Tipo: " + result.getShowType());
+
+                    System.out.println("Ano: " + result.getReleaseYear());
+
+                    System.out.println("Gêneros: " + result.getGenres());
+
+                    System.out.println("IMDB Score: " + result.getImdbScore());
+
+                    System.out.println("TMDB Score: " + result.getTmdbScore());
+
+                    System.out.println("Países: " + result.getProductionCountries());
+
+                } else {
+
+                    System.out.println(
+                            "\nPrograma não encontrado."
+                    );
+                }
+
+                // EXIBE TEMPO E COMPARAÇÕES
+
+                System.out.println(
+                        "\nComparações realizadas: "
+                        + tree.getComparisons()
+                );
+
+                System.out.println(
+                        "Tempo de execução: "
+                        + executionTime
+                        + " ns"
+                );
+
+                break;
+            }
+
+            // OPÇÃO 9 - REMOVER PROGRAMA
+            case 9: {
+
+                System.out.println("\n=== REMOVER PROGRAMA ===");
+
+                System.out.print("\nDigite o ID do programa: ");
+
+                String id = sc.nextLine();
+
+                // VERIFICA SE EXISTE
+
+                ProgramaNetFlix result = tree.search(id);
+
+                if (result == null) {
+
+                    System.out.println(
+                            "\nPrograma não encontrado."
+                    );
+
+                } else {
+
+                    tree.remove(id);
+
+                    System.out.println(
+                            "\nPrograma removido com sucesso!"
+                    );
+                }
+
+                break;
+            }
+
+            // OPÇÃO 10 - ALTURA DA ÁRVORE
+            case 10:
+
+                System.out.println(
+                        "\nAltura da árvore BST: "
+                        + tree.height()
+                );
+
+                break;
+
+            // OPÇÃO 11 - SALVAR EM ARQUIVO
+            case 11: {
+
+                System.out.println("\n=== SALVAR DADOS ===");
+
+                System.out.print(
+                        "\nDigite o nome do arquivo: "
+                );
+
+                String outputFile = sc.nextLine();
+
+                // CHAMA MÉTODO DE SALVAMENTO
+
+                Loader.saveData(
+                        "../data/" + outputFile,
+                        tree
+                );
+
+                break;
+            }
+
+                // OPÇÃO 0 - ENCERRAR
                 case 0:
 
                     System.out.print(
-                            "\nTem certeza que deseja sair? (S/N): "
+                            "\nDeseja realmente sair? (s/n): "
                     );
 
                     String confirm = sc.nextLine();
 
-                    if (
-                            confirm.equalsIgnoreCase("S")
-                            ||
-                            confirm.equalsIgnoreCase("SIM")
-                    ) {
+                    if (confirm.equalsIgnoreCase("s")) {
+
+                        // libera referência da árvore
+                        tree = null;
+
+                        running = false;
 
                         System.out.println(
-                                "\nEncerrando programa..."
-                        );
-
-                    } else {
-
-                        option = -1;
-
-                        System.out.println(
-                                "\nRetornando ao menu..."
+                                "\nAplicação encerrada."
                         );
                     }
 
                     break;
 
-                // =====================================================
                 // OPÇÃO INVÁLIDA
-                // =====================================================
-
                 default:
 
                     System.out.println(
                             "\nOpção inválida."
                     );
-
-                    break;
             }
-
-        } while (option != 0);
-
-        // =====================================================
-        // FECHA O SCANNER
-        // =====================================================
-
+        }
         sc.close();
     }
 }

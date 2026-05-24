@@ -1,3 +1,12 @@
+/*
+PROJETO 2 - BST NETFLIX
+Disciplina: Estrutura de Dados
+
+Integrantes:
+- Vitória Cardoso Alves - 10735648
+- Bruno Malagoli - 10736098
+*/
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
